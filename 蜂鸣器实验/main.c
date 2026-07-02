@@ -4,14 +4,14 @@
 
 int main(void)
 {
-    clk_enable();    /* 使能外设时钟 */
-    beep_init();     /* 初始化蜂鸣器 IO */
+    clk_enable();
+    beep_init();
 
     while (1) {
-        beep_on();          /* 蜂鸣器响 */
+        beep_on();
         delay(500);
 
-        beep_off();         /* 蜂鸣器停 */
+        beep_off();
         delay(500);
     }
 
