@@ -1,43 +1,32 @@
 #include "bsp_led.h"
-#include "fsl_iomuxc.h"
-#include "fsl_gpio.h"
 
-/* GPIO1_IO03 的复用和电气属性寄存器地址 */
-#define MUX_CTL_PAD_GPIO1_IO03   0x020E0068U
-#define PAD_CTL_PAD_GPIO1_IO03   0x020E02F4U
-
-/* ===== 使能所有外设时钟 ===== */
 void clk_enable(void)
 {
-    CCM_Type *ccm = CCM_BASE;
-    ccm->CCGR0 = 0xFFFFFFFF;
-    ccm->CCGR1 = 0xFFFFFFFF;
-    ccm->CCGR2 = 0xFFFFFFFF;
-    ccm->CCGR3 = 0xFFFFFFFF;
-    ccm->CCGR4 = 0xFFFFFFFF;
-    ccm->CCGR5 = 0xFFFFFFFF;
-    ccm->CCGR6 = 0xFFFFFFFF;
+    CCM->CCGR0 = 0xFFFFFFFF;
+    CCM->CCGR1 = 0xFFFFFFFF;
+    CCM->CCGR2 = 0xFFFFFFFF;
+    CCM->CCGR3 = 0xFFFFFFFF;
+    CCM->CCGR4 = 0xFFFFFFFF;
+    CCM->CCGR5 = 0xFFFFFFFF;
+    CCM->CCGR6 = 0xFFFFFFFF;
 }
 
-/* ===== 初始化 LED（SDK 方式） ===== */
 void led_init(void)
 {
-    IOMUXC_SetPinMux(MUX_CTL_PAD_GPIO1_IO03, 0x5U);
-    IOMUXC_SetPinConfig(PAD_CTL_PAD_GPIO1_IO03, 0x10B0U);
+    /* 复用为 GPIO + 配置电气属性 */
+    IOMUXC_SetPinMux(IOMUXC_GPIO1_IO03_GPIO1_IO03, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO1_IO03_GPIO1_IO03, 0x10B0U);
 
-    gpio_pin_config_t led_config = {
-        .direction   = kGPIO_DigitalOutput,
-        .outputLogic = 0U,
-    };
-    GPIO_PinInit(GPIO1_BASE, 3U, &led_config);
+    /* 设置 GPIO1_IO03 为输出 */
+    GPIO1->GDIR |= (1 << 3);
 }
 
 void led_on(void)
 {
-    GPIO_PinWrite(GPIO1_BASE, 3U, 0U);
+    GPIO1->DR &= ~(1 << 3);
 }
 
 void led_off(void)
 {
-    GPIO_PinWrite(GPIO1_BASE, 3U, 1U);
+    GPIO1->DR |= (1 << 3);
 }

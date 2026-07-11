@@ -10,7 +10,6 @@ INCUDIRS := sdk \
             bsp/led
 
 SRCDIRS  := . \
-            sdk \
             bsp/led \
             project
 
